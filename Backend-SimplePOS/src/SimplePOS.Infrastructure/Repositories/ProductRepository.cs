@@ -14,6 +14,9 @@ public class ProductRepository : IProductRepository
 
     public void Remove(Product product) => _db.Products.Remove(product);
 
+    //The ListAsync method retrieves a list of products from the database, with optional filtering by search term and product group, and supports pagination.
+    //It uses AsNoTracking for better performance in read-only scenarios, and it constructs a dynamic query based on the provided parameters.
+
     public async Task<List<Product>> ListAsync(string? q, int? groupId, int? page, int? pageSize)
     {
         var query = _db.Products.AsNoTracking().AsQueryable();
@@ -46,6 +49,7 @@ public class ProductRepository : IProductRepository
         return await query.ToListAsync();
     }
 
+    //Exclude the current record when checking for duplicates during update operations, to allow the record to be updated without triggering a false positive for a duplicate.
     public Task<bool> ExistsBySkuAsync(string sku, int? excludedId = null)
     {
         var query = _db.Products.AsNoTracking().Where(x => x.Sku == sku);
@@ -59,9 +63,12 @@ public class ProductRepository : IProductRepository
         if (excludedId.HasValue) query = query.Where(x => x.Id != excludedId.Value);
         return query.AnyAsync();
     }
+
+    //Traked entity is needed for update scenarios, so that EF can detect changes and update the record in the database when SaveChangesAsync is called.
     public Task<Product?> GetTrackedByIdAsync(int id) =>
         _db.Products.FirstOrDefaultAsync(x => x.Id == id);
-        
+
+    //Non-tracked entity is sufficient for read-only scenarios, and it can improve performance by avoiding the overhead of change tracking.
     public Task<Product?> GetByIdAsync(int id) =>
         _db.Products.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
 

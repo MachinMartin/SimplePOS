@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="../build/SimplePOS.Api.props" />
-</Project>
