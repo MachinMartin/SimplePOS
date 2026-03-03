@@ -50,7 +50,7 @@ public class TenantService
         return new TenantResponse(tenant.Id, tenant.Name);
     }
 
-    public async void DeleteAsync(int id)
+    public async Task DeleteAsync(int id)
     {
         var tenant = await _tenantRepository.GetByIdAsync(id);
         if (tenant == null)
@@ -59,5 +59,11 @@ public class TenantService
         }
         _tenantRepository.Remove(tenant);
         await _tenantRepository.SaveChangesAsync();
+    }
+
+    public async Task<List<TenantResponse>> ListAsync(string? query, int? page, int? pageSize)
+    {
+        var tenants = await _tenantRepository.ListAsync(query, page, pageSize);
+        return tenants.Select(t => new TenantResponse(t.Id, t.Name)).ToList();
     }
 }

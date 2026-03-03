@@ -12,6 +12,27 @@ public class TenantRepository : ITenantRepository
 
     public void Remove(Tenant tenant) => _db.Tenants.Remove(tenant);
 
+    public Task<List<Tenant>> ListAsync(string? q, int? page, int? pageSize)
+    {
+        var query = _db.Tenants.AsNoTracking().AsQueryable();
+        if (!string.IsNullOrWhiteSpace(q))
+        {
+            var term = q.Trim();
+            var pattern = $"%{term}%";
+            query = query.Where(x =>
+                EF.Functions.ILike(x.Name, pattern));
+        }
+        query = query.OrderBy(x => x.Id);
+        // paging
+        var p = page.GetValueOrDefault(1);
+        var ps = pageSize.GetValueOrDefault(50);
+        if (p < 1) p = 1;
+        if (ps < 1) ps = 50;
+        if (ps > 200) ps = 200;
+        query = query.Skip((p - 1) * ps).Take(ps);
+        return query.ToListAsync();
+    }
+
     public Task<Tenant?> GetByIdAsync(int id) =>
         _db.Tenants.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
 

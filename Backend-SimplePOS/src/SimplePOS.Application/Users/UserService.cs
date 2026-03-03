@@ -1,4 +1,7 @@
+using SimplePOS.Application.Products;
 using SimplePOS.Domain.Entities;
+using System.Diagnostics.Contracts;
+using System.Text.RegularExpressions;
 
 namespace SimplePOS.Application.Users;
 
@@ -17,6 +20,25 @@ public class UserService
         var user = new User(request.TenantId, request.Username, request.Password);
         _repository.Add(user);
         await _repository.SaveChangesAsync();
+        return new UserResponse(user.Id, user.Username);
+    }
+
+    public async Task<List<UserResponse>> ListAsync(string? query)
+    {
+        var users = await _repository.ListAsync(query);
+
+        return users
+            .Select(x => new UserResponse(
+                x.Id,
+                x.Username
+            ))
+            .ToList();
+    }
+
+    public async Task<UserResponse> GetByIdAsync(int id)
+    {
+        var user = await _repository.GetByIdAsync(id);
+        if (user == null) throw new Exception("User not found.");
         return new UserResponse(user.Id, user.Username);
     }
 

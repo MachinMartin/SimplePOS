@@ -10,5 +10,5 @@ public interface IUserRepository
     Task<User?> GetByIdAsync(int id);
     void Remove(Product product);
     Task SaveChangesAsync();
-    Task<IEnumerable<object>> ListAsync();
+    Task<List<User>> ListAsync(string? query);
 }

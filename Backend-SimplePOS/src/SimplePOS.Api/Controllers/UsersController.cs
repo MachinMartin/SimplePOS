@@ -20,4 +20,17 @@ public class UsersController : ControllerBase
         var created = await _svc.CreateAsync(req);
         return Created($"/api/users/{created.Id}", created);
     }
+
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetById(int id) { 
+        var user = await _svc.GetByIdAsync(id);
+        return Ok(user);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> List([FromQuery] string? q)
+    {
+        var users = await _svc.ListAsync(q);
+        return Ok(users);
+    }
 }

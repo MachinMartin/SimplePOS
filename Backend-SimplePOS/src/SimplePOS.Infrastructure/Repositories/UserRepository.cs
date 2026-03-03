@@ -12,14 +12,23 @@ public class UserRepository : IUserRepository
 
     public void Remove(User user) => _db.Users.Remove(user);
 
-    public Task<List<User>> ListAsync() =>
-        _db.Users.AsNoTracking().OrderBy(x => x.Id).ToListAsync();
-
-    public Task<bool> ExistsByUsernameAsync(string username, int? excludedId = null)
+public Task<bool> ExistsByUsernameAsync(string username, int? excludedId = null)
     {
         var query = _db.Users.AsNoTracking().Where(x => x.Username == username);
         if (excludedId.HasValue) query = query.Where(x => x.Id != excludedId.Value);
         return query.AnyAsync();
+    }
+
+    public async Task<List<User>> ListAsync(string? query)
+    {
+        var users = _db.Users.AsNoTracking().AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(query))
+            users = users.Where(x => x.Username.Contains(query));
+
+        return await users
+            .OrderBy(x => x.Id)
+            .ToListAsync();
     }
 
     public Task<User?> GetTrackedByIdAsync(int id) =>
@@ -37,8 +46,5 @@ public class UserRepository : IUserRepository
         throw new NotImplementedException();
     }
 
-    Task<IEnumerable<object>> IUserRepository.ListAsync()
-    {
-        throw new NotImplementedException();
-    }
+    
 }
