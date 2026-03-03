@@ -13,4 +13,12 @@ public class Tenant
     {
         Name = name;
     }
+
+    public void ChangeName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentException("Name cannot be empty");
+
+        Name = name;
+    }
 }

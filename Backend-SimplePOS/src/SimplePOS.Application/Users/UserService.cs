@@ -1,5 +1,6 @@
-using SimplePOS.Application.Users;
 using SimplePOS.Domain.Entities;
+
+namespace SimplePOS.Application.Users;
 
 public class UserService
 {

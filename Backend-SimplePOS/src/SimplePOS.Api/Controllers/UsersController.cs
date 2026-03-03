@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using SimplePOS.Application.Products;
+using SimplePOS.Application.Users;
 
 namespace SimplePOS.Api.Controllers;
 

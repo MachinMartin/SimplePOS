@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using SimplePOS.Api.Middleware;
 using SimplePOS.Application.ProductGroups;
 using SimplePOS.Application.Products;
+using SimplePOS.Application.Users;
+using SimplePOS.Application.Tenants;
 using SimplePOS.Infrastructure;
 using SimplePOS.Infrastructure.Data;
 
@@ -15,6 +17,9 @@ builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<ProductGroupService>();
+builder.Services.AddScoped<TenantService>();
+builder.Services.AddScoped<UserService>();
+
 
 var app = builder.Build();
 
