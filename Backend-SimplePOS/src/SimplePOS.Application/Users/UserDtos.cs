@@ -1,3 +1,4 @@
-public record CreateUserRequest(int TenantId, string Username, string Password);
-public record UpdateUserRequest(int Id, string Username, string Password);
-public record UserResponse(int Id, string Username);
+public record CreateUserRequest(int Id, string Username, string Password, int TenantId);
+public record UpdateUserRequest(int Id, string Username, string Password, int TenantId);
+public record UserResponse(int Id, string Username, TenantInfo Tenant);
+public record TenantInfo(int Id, string Name);

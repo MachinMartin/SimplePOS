@@ -21,7 +21,10 @@ public Task<bool> ExistsByUsernameAsync(string username, int? excludedId = null)
 
     public async Task<List<User>> ListAsync(string? query)
     {
-        var users = _db.Users.AsNoTracking().AsQueryable();
+        var users = _db.Users
+       .Include(x => x.Tenant)  // Include the related Tenant entity
+       .AsNoTracking() // Use AsNoTracking for better performance in read-only scenarios
+       .AsQueryable(); 
 
         if (!string.IsNullOrWhiteSpace(query))
             users = users.Where(x => x.Username.Contains(query));
@@ -36,9 +39,11 @@ public Task<bool> ExistsByUsernameAsync(string username, int? excludedId = null)
 
     public Task SaveChangesAsync() => _db.SaveChangesAsync();
 
-    public Task<User?> GetByIdAsync(int id)
+    public async Task<User?> GetByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        return await _db.Users
+            .Include(x => x.Tenant)
+            .FirstOrDefaultAsync(x => x.Id == id);
     }
 
     public void Remove(Product product)

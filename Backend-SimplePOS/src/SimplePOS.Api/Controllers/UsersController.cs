@@ -14,6 +14,7 @@ public class UsersController : ControllerBase
         _svc = svc;
     }
 
+    // CREATE
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateUserRequest req)
     {
@@ -21,16 +22,27 @@ public class UsersController : ControllerBase
         return Created($"/api/users/{created.Id}", created);
     }
 
+    // GET BY ID
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById(int id) { 
         var user = await _svc.GetByIdAsync(id);
         return Ok(user);
     }
 
+    // GET ALL
     [HttpGet]
     public async Task<IActionResult> List([FromQuery] string? q)
     {
         var users = await _svc.ListAsync(q);
         return Ok(users);
     }
+
+    // UPDATE
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> Update(int id, [FromBody] UpdateUserRequest req)
+    {
+        await _svc.UpdateAsync(id, req);
+        return NoContent();
+    }
+
 }
